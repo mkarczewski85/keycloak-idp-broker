@@ -1,0 +1,104 @@
+{
+  "realm": "b2b",
+  "enabled": true,
+  "browserFlow": "browser-with-domain-redirect",
+  "clients": [
+    {
+      "clientId": "spring-gateway",
+      "protocol": "openid-connect",
+      "secret": "spring-client-secret",
+      "publicClient": false,
+      "redirectUris": [ "http://localhost:9000/login/oauth2/code/*", "http://localhost:9000" ],
+      "webOrigins": ["+"],
+      "standardFlowEnabled": true,
+      "attributes": {
+        "login_theme": "b2b-custom"
+      }
+    }
+  ],
+  "identityProviders": [
+    {
+      "alias": "acme-corp-idp",
+      "displayName": "ACME Corp. IdP",
+      "providerId": "oidc",
+      "enabled": true,
+      "trustEmail": true,
+      "storeToken": true,
+      "addReadTokenRoleOnCreate": false,
+      "firstBrokerLoginFlowAlias": "first broker login",
+      "config": {
+        "clientId": "broker-client",
+        "clientSecret": "broker-secret",
+        "authorizationUrl": "http://keycloak-idp:8180/realms/acme-corp-idp/protocol/openid-connect/auth",
+        "tokenUrl": "http://keycloak-idp:8080/realms/acme-corp-idp/protocol/openid-connect/token",
+        "jwksUrl": "http://keycloak-idp:8080/realms/acme-corp-idp/protocol/openid-connect/certs",
+        "issuer": "http://keycloak-idp:8180/realms/acme-corp-idp",
+        "defaultScope": "openid email profile"
+      }
+    }
+  ],
+  "authenticationFlows": [
+    {
+      "alias": "Custom Browser Flow",
+      "description": "Custom Browser Flow for email-based IdP mapping",
+      "providerId": "basic-flow",
+      "topLevel": true,
+      "builtIn": false,
+      "authenticationExecutions": [
+        {
+          "authenticator": "domain-to-idp-redirect",
+          "requirement": "REQUIRED",
+          "priority": 10,
+          "autheticatorFlow": false,
+          "userSetupAllowed": false
+        },
+        {
+          "authenticator": "identity-provider-redirector",
+          "requirement": "REQUIRED",
+          "priority": 20,
+          "autheticatorFlow": false,
+          "userSetupAllowed": false
+        }
+      ]
+    },
+    {
+      "alias": "Custom First Broker Login",
+      "description": "Custom First Broker Login Flow for IdP authentication",
+      "providerId": "basic-flow",
+      "topLevel": true,
+      "builtIn": false,
+      "authenticationExecutions": [
+        {
+          "authenticator": "idp-create-user-if-unique",
+          "requirement": "ALTERNATIVE",
+          "priority": 10,
+          "authenticatorFlow": false,
+          "userSetupAllowed": false
+        },
+        {
+          "authenticator": "idp-auto-link",
+          "requirement": "ALTERNATIVE",
+          "priority": 20,
+          "authenticatorFlow": false,
+          "userSetupAllowed": false
+        },
+        {
+          "authenticator": "idp-review-profile",
+          "requirement": "OPTIONAL",
+          "priority": 30,
+          "authenticatorFlow": false,
+          "userSetupAllowed": false
+        }
+      ]
+    }
+  ],
+  "authenticatorConfig": [],
+  "requiredActions": [],
+  "browserFlow": "Custom Browser Flow",
+  "firstBrokerLoginFlow": "Custom First Broker Login",
+  "clientAuthenticationFlow": "clients",
+  "directGrantFlow": "direct grant",
+  "registrationFlow": "registration",
+  "resetCredentialsFlow": "reset credentials"
+} 
+  

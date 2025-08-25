@@ -1,0 +1,36 @@
+{
+  "realm": "acme-corp-idp",
+  "displayName": "ACME Corp.",
+  "enabled": true,
+  "users": [
+    {
+      "username": "jdoe",
+      "enabled": true,
+      "email": "john.doe@acmecorp.com",
+      "emailVerified": true,
+      "firstName": "John",
+      "lastName": "Doe",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password"
+        }
+      ],
+      "requiredActions": []
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "broker-client",
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "broker-secret",
+      "redirectUris": [
+        "http://keycloak-broker:8080/realms/b2b/broker/acme-corp-idp/endpoint",
+        "http://localhost:8080/realms/b2b/broker/acme-corp-idp/endpoint"
+      ],
+      "webOrigins": ["+"]
+    }
+  ]
+}
+
